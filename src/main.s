@@ -7,6 +7,7 @@ section .data
 
 section .bss
     input_char resb 1
+    return_buf resb 1
 
 section .text
     global _start
@@ -15,6 +16,37 @@ extern set_raw_mode
 
 _start:
     call set_raw_mode
+    call get_input
+    jmp exit
+
+exit:
+    add rax, '0'
+    mov [return_buf], al
+    ; write(1, newline, newline_len)
+    mov rax, 1              ; syscall: write
+    mov rdi, 1              ; fd = stdout
+    mov rsi, newline
+    mov rdx, 1
+    syscall
+
+    ; write(1, return_buf, 1)
+    mov rax, 1              ; syscall: write
+    mov rdi, 1              ; fd = stdout
+    mov rsi, return_buf
+    mov rdx, 1
+    syscall
+
+    ; write(1, newline, newline_len)
+    mov rax, 1              ; syscall: write
+    mov rdi, 1              ; fd = stdout
+    mov rsi, newline
+    mov rdx, 1
+    syscall
+
+    ; exit(number)
+    pop rdi            ; exit code
+    mov rax, 60             ; syscall: exit
+    syscall
 
 get_input:
     ; write(1, prompt, prompt_len)
@@ -42,8 +74,7 @@ get_input:
     ; Check upper bound
     cmp    rax, 9
     jg     invalid_input
-    push   rax
-    jmp    exit
+    ret
 
 invalid_input:
     ; write(1, invalid, invalid_len)
@@ -53,15 +84,3 @@ invalid_input:
     mov rdx, invalid_len
     syscall
     jmp get_input
-
-exit:
-    ; write(1, newline, newline_len)
-    mov rax, 1              ; syscall: write
-    mov rdi, 1              ; fd = stdout
-    mov rsi, newline
-    mov rdx, 1
-
-    ; exit(number)
-    pop rdi                 ; exit code
-    mov rax, 60             ; syscall: exit
-    syscall
