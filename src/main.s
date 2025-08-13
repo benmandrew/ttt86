@@ -44,7 +44,7 @@ exit:
     syscall
 
     ; exit(number)
-    pop rdi            ; exit code
+    mov rdi, 0              ; exit code
     mov rax, 60             ; syscall: exit
     syscall
 

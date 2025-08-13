@@ -1,4 +1,4 @@
-.PHONY: all clean
+.PHONY: all clean run
 
 ASMFLAGS = -f elf64 -W+all
 LINKFLAGS = -static
@@ -12,6 +12,9 @@ all: $(BUILD_DIR)/main
 
 clean:
 	rm -rf $(BUILD_DIR)
+
+run: all
+	./$(BUILD_DIR)/main
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.s | $(BUILD_DIR)
 	nasm $(ASMFLAGS) -o $@ $<
