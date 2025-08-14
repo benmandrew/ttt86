@@ -13,7 +13,7 @@ all: $(BUILD_DIR)/main
 clean:
 	rm -rf $(BUILD_DIR)
 
-run: all
+run: $(BUILD_DIR)/main
 	./$(BUILD_DIR)/main
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.s | $(BUILD_DIR)
