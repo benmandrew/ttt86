@@ -20,8 +20,8 @@ _start:
     call set_raw_mode
     call draw_board
 
-    ; call get_input
-    ; call print_input
+    call get_input
+    call print_input
     jmp exit
 
 exit:
@@ -30,58 +30,58 @@ exit:
     mov rax, 60             ; syscall: exit
     syscall
 
-; get_input:
-;     ; Prompt user
-;     mov rax, 1              ; syscall: write
-;     mov rdi, 1              ; fd = stdout
-;     mov rsi, prompt
-;     mov rdx, prompt_len
-;     syscall
-;     ; Get user input
-;     mov rax, 0              ; syscall: read
-;     mov rdi, 0              ; fd = stdin
-;     mov rsi, input_char
-;     mov rdx, 1
-;     syscall
-;     ; Convert ASCII to integer
-;     movzx rax, byte [input_char]
-;     sub    rax, '0'
-;     ; Check lower bound
-;     cmp    rax, 1
-;     jl     invalid_input
-;     ; Check upper bound
-;     cmp    rax, 9
-;     jg     invalid_input
-;     ret
+ get_input:
+     ; Prompt user
+     mov rax, 1              ; syscall: write
+     mov rdi, 1              ; fd = stdout
+     mov rsi, prompt
+     mov rdx, prompt_len
+     syscall
+     ; Get user input
+     mov rax, 0              ; syscall: read
+     mov rdi, 0              ; fd = stdin
+     mov rsi, input_char
+     mov rdx, 1
+     syscall
+     ; Convert ASCII to integer
+     movzx rax, byte [input_char]
+     sub    rax, '0'
+     ; Check lower bound
+     cmp    rax, 1
+     jl     invalid_input
+     ; Check upper bound
+     cmp    rax, 9
+     jg     invalid_input
+     ret
 
-; invalid_input:
-;     ; write(1, invalid, invalid_len)
-;     mov rax, 1
-;     mov rdi, 1
-;     mov rsi, invalid
-;     mov rdx, invalid_len
-;     syscall
-;     jmp get_input
+ invalid_input:
+     ; write(1, invalid, invalid_len)
+     mov rax, 1
+     mov rdi, 1
+     mov rsi, invalid
+     mov rdx, invalid_len
+     syscall
+     jmp get_input
 
-; print_input:
-;     ; Convert integer to ASCII
-;     add rax, '0'
-;     mov [return_buf], al
-;     ; write(1, newline, newline_len)
-;     mov rax, 1              ; syscall: write
-;     mov rdi, 1              ; fd = stdout
-;     mov rsi, newline
-;     mov rdx, 1
-;     syscall
-;     ; write(1, return_buf, 1)
-;     mov rax, 1              ; syscall: write
-;     mov rdi, 1              ; fd = stdout
-;     mov rsi, return_buf
-;     mov rdx, 1
-;     syscall
-;     ; write(1, newline, newline_len)
-;     mov rax, 1              ; syscall: write
-;     mov rdi, 1              ; fd = stdout
-;     mov rsi, newline
-;     mov rdx, 1
-;     syscall
+ print_input:
+     ; Convert integer to ASCII
+     add rax, '0'
+     mov [return_buf], al
+     ; write(1, newline, newline_len)
+     mov rax, 1              ; syscall: write
+     mov rdi, 1              ; fd = stdout
+     mov rsi, newline
+     mov rdx, 1
+     syscall
+     ; write(1, return_buf, 1)
+     mov rax, 1              ; syscall: write
+     mov rdi, 1              ; fd = stdout
+     mov rsi, return_buf
+     mov rdx, 1
+     syscall
+     ; write(1, newline, newline_len)
+     mov rax, 1              ; syscall: write
+     mov rdi, 1              ; fd = stdout
+     mov rsi, newline
+     mov rdx, 1
+     syscall
