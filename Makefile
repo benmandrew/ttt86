@@ -10,6 +10,9 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.s,$(BUILD_DIR)/%.o,$(SOURCES))
 
 all: $(BUILD_DIR)/main
 
+debug: ASMFLAGS += -g -F DWARF
+debug: $(BUILD_DIR)/main
+
 clean:
 	rm -rf $(BUILD_DIR)
 
