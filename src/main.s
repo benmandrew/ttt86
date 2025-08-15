@@ -17,9 +17,13 @@ section .text
 
 extern set_raw_mode
 extern draw_board
+extern init_board
 
 _start:
     call set_raw_mode
+    mov rdi, board
+    call init_board
+    mov rdi, board
     call draw_board
 
     call get_input

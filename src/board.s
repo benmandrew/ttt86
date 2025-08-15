@@ -1,6 +1,7 @@
 BITS 64
 
 global draw_board
+global init_board
 
 ; 0xE2, 0x94, 0x8C = ┌
 ; 0xE2, 0x94, 0x90 = ┐
@@ -39,6 +40,7 @@ section .text
 ; Returns:
 ;   None
 draw_board_row:
+    mov r9, rdi
     xor r8, r8
 copy_vertical_lines_loop:
     lea rdi, [row+r8*4]
@@ -48,11 +50,14 @@ copy_vertical_lines_loop:
     inc r8
     cmp r8, 4
     jl copy_vertical_lines_loop
-
-    mov byte [row + 3], 0x20
-    mov byte [row + 7], 0x20
-    mov byte [row + 11], 0x20
-    mov byte [row + 15], 0x0A
+    ; Copy board data into row, spaced between the vertical bars
+    mov al, [r9]
+    mov byte [row + 3], al
+    mov al, [r9+1]
+    mov byte [row + 7], al
+    mov al, [r9+2]
+    mov byte [row + 11], al
+    mov byte [row + 15], 0x0A ; Newline
     mov rax, 1              ; syscall: write
     mov rdi, 1              ; fd = stdout
     mov rsi, row
@@ -67,44 +72,59 @@ copy_vertical_lines_loop:
 ;   None
 draw_board:
     mov r8, rdi
-
-    ; Draw the top row of board
+    ; Draw the top row
     mov rax, 1              ; syscall: write
     mov rdi, 1              ; fd = stdout
     mov rsi, board_top
     mov rdx, board_top_len
     syscall
-
+    ; Draw the top dynamic row
     mov rdi, r8
+    push r8
     call draw_board_row
-
-    ; Draw the top-middle row of board
+    pop r8
+    ; Draw the top-middle static row
     mov rax, 1              ; syscall: write
     mov rdi, 1              ; fd = stdout
     mov rsi, board_middle
     mov rdx, board_middle_len
     syscall
-
+    ; Draw the middle dynamic row
     add rdi, r8
     add rdi, 3
+    push r8
     call draw_board_row
-
-    ; Draw the bottom-middle row of board
+    pop r8
+    ; Draw the bottom-middle static row
     mov rax, 1              ; syscall: write
     mov rdi, 1              ; fd = stdout
     mov rsi, board_middle
     mov rdx, board_middle_len
     syscall
-
+    ; Draw bottom dynamic row
     mov rdi, r8
     add rdi, 6
+    push r8
     call draw_board_row
-
-    ; Draw the bottom row of board
+    pop r8
+    ; Draw the bottom static row
     mov rax, 1              ; syscall: write
     mov rdi, 1              ; fd = stdout
     mov rsi, board_bottom
     mov rdx, board_bottom_len
     syscall
+    ret
 
+; Initialise the characters of the 9-element board array
+; Parameters:
+;   rdi - pointer to the board state
+; Returns:
+;   None
+init_board:
+    xor rcx, rcx
+loop:
+    mov byte [rdi+rcx], 0x20
+    inc rcx
+    cmp rcx, 9
+    jl loop
     ret
