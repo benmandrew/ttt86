@@ -24,10 +24,10 @@ section .data
     board_bottom_len equ $ - board_bottom
     board_vertical db 0xE2, 0x94, 0x82
     board_vertical_len equ $ - board_vertical
-    row_len db 8
+    row_len equ 9 
 
 section .bss
-    row resb 8
+    row resb 9
 
 section .text
 
@@ -59,7 +59,8 @@ draw_board_row:
     mov byte [row + 4], '|'
     mov byte [row + 5], 0x20
     mov byte [row + 6], '|'
-    mov byte [row + 7], 10
+    mov byte [row + 7], 0x0A
+    mov byte [row + 8], 0x00
     mov rax, 1              ; syscall: write
     mov rdi, 1              ; fd = stdout
     mov rsi, row
