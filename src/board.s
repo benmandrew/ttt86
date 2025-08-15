@@ -1,3 +1,5 @@
+BITS 64
+
 global draw_board
 
 ; 0xE2, 0x94, 0x8C = ┌

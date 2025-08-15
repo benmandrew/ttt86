@@ -1,3 +1,5 @@
+BITS 64
+
 global set_raw_mode
 
 section .bss

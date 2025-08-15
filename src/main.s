@@ -1,7 +1,9 @@
+BITS 64
+
 section .data
     prompt db "Enter a number (1-9): ", 0
     prompt_len equ $ - prompt
-    invalid db "Invalid input.", 10, 0
+    invalid db "Invalid input.", 0x0D, 0
     invalid_len equ $ - invalid
     newline db 10
 
