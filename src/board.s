@@ -24,27 +24,12 @@ section .data
     board_bottom_len equ $ - board_bottom
     board_vertical db 0xE2, 0x94, 0x82
     board_vertical_len equ $ - board_vertical
-    row_len equ 9 
+    row_len equ 16 
 
 section .bss
-    row resb 9
+    row resb 16
 
 section .text
-
-; Copy three-byte Unicode character from source to destination
-; Parameters:
-;   rdi - pointer to the destination
-;   rsi - pointer to the source
-; Returns:
-;   None
-copy_three_byte_unicode_char:
-    mov al, [rsi]         ; load first byte
-    mov [rdi], al         ; store first byte
-    mov al, [rsi + 1]     ; load second byte
-    mov [rdi + 1], al     ; store second byte
-    mov al, [rsi + 2]     ; load third byte
-    mov [rdi + 2], al     ; store third byte
-    ret
 
 ; Draw a single row of the game board
 ; Parameters:
@@ -52,22 +37,26 @@ copy_three_byte_unicode_char:
 ; Returns:
 ;   None
 draw_board_row:
-    mov byte [row], '|'
-    mov byte [row + 1], 0x20
-    mov byte [row + 2], '|'
+    xor r8, r8
+copy_vertical_lines_loop:
+    lea rdi, [row+r8*4]
+    mov rsi, board_vertical
+    mov rcx, board_vertical_len
+    rep movsb
+    inc r8
+    cmp r8, 4
+    jl copy_vertical_lines_loop
+
     mov byte [row + 3], 0x20
-    mov byte [row + 4], '|'
-    mov byte [row + 5], 0x20
-    mov byte [row + 6], '|'
-    mov byte [row + 7], 0x0A
-    mov byte [row + 8], 0x00
+    mov byte [row + 7], 0x20
+    mov byte [row + 11], 0x20
+    mov byte [row + 15], 0x0A
     mov rax, 1              ; syscall: write
     mov rdi, 1              ; fd = stdout
     mov rsi, row
     mov rdx, row_len
     syscall
     ret
-
 
 ; Draw the game board
 ; Parameters:
