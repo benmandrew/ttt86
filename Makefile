@@ -1,7 +1,7 @@
 .PHONY: all clean run fmt
 
 ASMFLAGS = -f elf64 -W+all
-LINKFLAGS = -static
+LINKFLAGS = -static -nostdlib
 SRC_DIR = src
 BUILD_DIR = build
 
