@@ -134,7 +134,7 @@ init_board_loop:
 ; Parameters:
 ;   rdi - pointer to the board state
 ; Returns:
-;   rax - 0x00 if no win, and the character that won if so ('X' or 'O')
+;   rax - 0x00 if no win, and the character that won otherwise ('X' or 'O')
 check_horizontal_win:
     xor rcx, rcx
     mov r9, 3 ; Multiplier for address computation
@@ -143,16 +143,16 @@ check_horizontal_win_loop:
     je check_horizontal_no_win
     mov rax, rcx ; Compute address, rdi+rcx*3
     inc rcx
-    mul r9
+    mul r9       ; Multiple rax by r9
     add rax, rdi
-    mov r8, [rax]
-    cmp r8, 0x20 ; Is first char a space?
+    mov r8b, [rax]
+    cmp r8b, 0x20 ; Is first char a space?
     je check_horizontal_win_loop
-    cmp r8, [rax+1]
+    cmp r8b, [rax+1] ; Are the first and second chars equal?
     jne check_horizontal_win_loop
-    cmp r8, [rax+2]
+    cmp r8b, [rax+2] ; Are the first and third chars equal?
     jne check_horizontal_win_loop
-    mov rax, r8
+    movzx rax, r8b ; Zero-extend to fill register
     ret
 check_horizontal_no_win:
     mov rax, 0x00
