@@ -1,6 +1,6 @@
 # TTT86
 
-Tic-Tac-Toe in 64-bit x86 assembly.
+Tic-Tac-Toe in 64-bit x86 NASM assembly.
 
 Build and run on Linux with
 
@@ -9,7 +9,9 @@ make
 ./build/main
 ```
 
-Or run from Docker with
+Requires the `nasm` assembler, `make`, and `ld` from `binutils`.
+
+Alternatively, you can run from Docker with
 
 ```sh
 docker run -it benmandrew/ttt86:latest
