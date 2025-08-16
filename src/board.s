@@ -2,6 +2,7 @@ BITS 64
 
 global draw_board
 global init_board
+global check_horizontal_win
 
 ; 0xE2, 0x94, 0x8C = ┌
 ; 0xE2, 0x94, 0x90 = ┐
@@ -122,9 +123,37 @@ draw_board:
 ;   None
 init_board:
     xor rcx, rcx
-loop:
+init_board_loop:
     mov byte [rdi+rcx], 0x20
     inc rcx
     cmp rcx, 9
-    jl loop
+    jl init_board_loop
+    ret
+
+; Check for horizontal win line
+; Parameters:
+;   rdi - pointer to the board state
+; Returns:
+;   rax - 0x00 if no win, and the character that won if so ('X' or 'O')
+check_horizontal_win:
+    xor rcx, rcx
+    mov r9, 3 ; Multiplier for address computation
+check_horizontal_win_loop:
+    cmp rcx, 3
+    je check_horizontal_no_win
+    mov rax, rcx ; Compute address, rdi+rcx*3
+    inc rcx
+    mul r9
+    add rax, rdi
+    mov r8, [rax]
+    cmp r8, 0x20 ; Is first char a space?
+    je check_horizontal_win_loop
+    cmp r8, [rax+1]
+    jne check_horizontal_win_loop
+    cmp r8, [rax+2]
+    jne check_horizontal_win_loop
+    mov rax, r8
+    ret
+check_horizontal_no_win:
+    mov rax, 0x00
     ret
