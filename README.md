@@ -8,3 +8,9 @@ Build and run on Linux with
 make
 ./build/main
 ```
+
+Or run from Docker with
+
+```sh
+docker run -it benmandrew/ttt86:latest
+```
