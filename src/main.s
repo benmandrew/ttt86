@@ -14,6 +14,7 @@ section .data
 section .bss
     input_char resb 1
     winner_char resb 1
+    current_player_char resb 1
     board resb 9
 
 section .text
@@ -30,10 +31,14 @@ _start:
     call init_board
     mov rdi, board
     call draw_board
+    mov byte [current_player_char], 'X'
 game_loop:
     call get_input
     dec rax ; Decrement user input to get index
-    mov byte [board+rax], 'X'
+    mov dl, [current_player_char]
+    mov [board+rax], dl
+    call swap_player
+    mov [current_player_char], al
     call reset_cursor
     mov rdi, board
     call draw_board
@@ -51,6 +56,20 @@ exit:
     mov rdi, 0              ; exit code
     mov rax, 60             ; syscall: exit
     syscall
+
+; Swap which player's turn it is
+; Parameters:
+;   dl - Current player's character
+; Returns:
+;   al - Next player's character
+swap_player:
+    cmp dl, 'X'
+    je swap_player_end
+    mov al, 'X'
+    ret
+swap_player_end:
+    mov al, 'O'
+    ret
 
 get_input:
     ; Prompt user
