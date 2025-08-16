@@ -143,6 +143,10 @@ check_win:
     jne check_win_end
     mov rdi, rbx
     call check_vertical_win
+    cmp rax, 0x00
+    jne check_win_end
+    mov rdi, rbx
+    call check_diagonal_win
 check_win_end:
     pop rbx
     ret
@@ -196,5 +200,34 @@ check_vertical_win_loop:
     movzx rax, r8b ; Zero-extend to fill register
     ret
 check_vertical_no_win:
+    mov rax, 0x00
+    ret
+
+; Check for vertical win line
+; Parameters:
+;   rdi - pointer to the board state
+; Returns:
+;   rax - 0x00 if no win, and the character that won otherwise ('X' or 'O')
+check_diagonal_win: ; Check top-left to bottom-right diagonal
+    mov r8b, [rdi]
+    cmp r8b, 0x20 ; Is first char a space?
+    je check_diagonal_win_tr_bl
+    cmp r8b, [rdi+4] ; Are the first and second chars equal?
+    jne check_diagonal_win_tr_bl
+    cmp r8b, [rdi+8] ; Are the first and third chars equal?
+    jne check_diagonal_win_tr_bl
+    movzx rax, r8b ; Zero-extend to fill register
+    ret
+check_diagonal_win_tr_bl: ; Check top-right to bottom-left diagonal
+    mov r8b, [rdi+2]
+    cmp r8b, 0x20 ; Is first char a space?
+    je check_diagonal_no_win
+    cmp r8b, [rdi+4] ; Are the first and second chars equal?
+    jne check_diagonal_no_win
+    cmp r8b, [rdi+6] ; Are the first and third chars equal?
+    jne check_diagonal_no_win
+    movzx rax, r8b ; Zero-extend to fill register
+    ret
+check_diagonal_no_win:
     mov rax, 0x00
     ret
