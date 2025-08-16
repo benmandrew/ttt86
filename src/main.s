@@ -23,7 +23,7 @@ section .text
 extern set_raw_mode
 extern draw_board
 extern init_board
-extern check_horizontal_win
+extern check_win
 
 _start:
     call set_raw_mode
@@ -43,7 +43,7 @@ game_loop:
     mov rdi, board
     call draw_board
     mov rdi, board
-    call check_horizontal_win
+    call check_win
     mov rdi, rax
     cmp rax, 0x00 ; Check if there is a win
     jne win

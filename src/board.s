@@ -2,7 +2,7 @@ BITS 64
 
 global draw_board
 global init_board
-global check_horizontal_win
+global check_win
 
 ; 0xE2, 0x94, 0x8C = ┌
 ; 0xE2, 0x94, 0x90 = ┐
@@ -130,6 +130,23 @@ init_board_loop:
     jl init_board_loop
     ret
 
+; Check for win line
+; Parameters:
+;   rdi - pointer to the board state
+; Returns:
+;   rax - 0x00 if no win, and the character that won otherwise ('X' or 'O')
+check_win:
+    push rbx
+    mov rbx, rdi
+    call check_horizontal_win
+    cmp rax, 0x00
+    jne check_win_end
+    mov rdi, rbx
+    call check_vertical_win
+check_win_end:
+    pop rbx
+    ret
+
 ; Check for horizontal win line
 ; Parameters:
 ;   rdi - pointer to the board state
@@ -155,5 +172,29 @@ check_horizontal_win_loop:
     movzx rax, r8b ; Zero-extend to fill register
     ret
 check_horizontal_no_win:
+    mov rax, 0x00
+    ret
+
+; Check for vertical win line
+; Parameters:
+;   rdi - pointer to the board state
+; Returns:
+;   rax - 0x00 if no win, and the character that won otherwise ('X' or 'O')
+check_vertical_win:
+    xor rcx, rcx
+check_vertical_win_loop:
+    cmp rcx, 3
+    je check_vertical_no_win
+    inc rcx
+    mov r8b, [rdi+rcx-1]
+    cmp r8b, 0x20 ; Is first char a space?
+    je check_vertical_win_loop
+    cmp r8b, [rdi+rcx+2] ; Are the first and second chars equal?
+    jne check_vertical_win_loop
+    cmp r8b, [rdi+rcx+5] ; Are the first and third chars equal?
+    jne check_vertical_win_loop
+    movzx rax, r8b ; Zero-extend to fill register
+    ret
+check_vertical_no_win:
     mov rax, 0x00
     ret
