@@ -6,6 +6,9 @@ section .data
     invalid db "Invalid input.", 0x0D, 0
     invalid_len equ $ - invalid
     newline db 10
+    reset_cursor_ansi db `\033[7A\033[22D`
+    reset_cursor_ansi_len equ $ - reset_cursor_ansi
+
 
 section .bss
     input_char resb 1
@@ -23,12 +26,16 @@ _start:
     call set_raw_mode
     mov rdi, board
     call init_board
+game_loop:
     mov rdi, board
     call draw_board
 
     call get_input
-    call print_input
-    jmp exit
+    dec rax
+    mov byte [board+rax], 'X'
+    ; call print_input
+    call reset_cursor
+    jmp game_loop
 
 exit:
     ; exit(number)
@@ -61,33 +68,17 @@ exit:
      ret
 
  invalid_input:
-     ; write(1, invalid, invalid_len)
-     mov rax, 1
-     mov rdi, 1
+     mov rax, 1 ; syscall: write
+     mov rdi, 1 ; fd = stdout
      mov rsi, invalid
      mov rdx, invalid_len
      syscall
      jmp get_input
 
- print_input:
-     ; Convert integer to ASCII
-     add rax, '0'
-     mov [return_buf], al
-     ; write(1, newline, newline_len)
+ reset_cursor:
      mov rax, 1              ; syscall: write
      mov rdi, 1              ; fd = stdout
-     mov rsi, newline
-     mov rdx, 1
+     mov rsi, reset_cursor_ansi
+     mov rdx, reset_cursor_ansi_len
      syscall
-     ; write(1, return_buf, 1)
-     mov rax, 1              ; syscall: write
-     mov rdi, 1              ; fd = stdout
-     mov rsi, return_buf
-     mov rdx, 1
-     syscall
-     ; write(1, newline, newline_len)
-     mov rax, 1              ; syscall: write
-     mov rdi, 1              ; fd = stdout
-     mov rsi, newline
-     mov rdx, 1
-     syscall
+     ret

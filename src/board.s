@@ -90,7 +90,7 @@ draw_board:
     mov rdx, board_middle_len
     syscall
     ; Draw the middle dynamic row
-    add rdi, r8
+    mov rdi, r8
     add rdi, 3
     push r8
     call draw_board_row
