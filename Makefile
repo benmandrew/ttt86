@@ -1,4 +1,4 @@
-.PHONY: all clean run
+.PHONY: all clean run fmt
 
 ASMFLAGS = -f elf64 -W+all
 LINKFLAGS = -static
@@ -18,6 +18,9 @@ clean:
 
 run: $(BUILD_DIR)/main
 	./$(BUILD_DIR)/main
+
+fmt:
+	find -name "*.s" -execdir naslint -i {} ";"
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.s | $(BUILD_DIR)
 	nasm $(ASMFLAGS) -o $@ $<

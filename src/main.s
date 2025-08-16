@@ -34,7 +34,7 @@ _start:
     mov byte [current_player_char], 'X'
 game_loop:
     call get_input
-    dec rax ; Decrement user input to get index
+    dec rax                   ; Decrement user input to get index
     mov dl, [current_player_char]
     mov [board+rax], dl
     call swap_player
@@ -45,16 +45,16 @@ game_loop:
     mov rdi, board
     call check_win
     mov rdi, rax
-    cmp rax, 0x00 ; Check if there is a win
+    cmp rax, 0x00             ; Check if there is a win
     jne win
     jmp game_loop
 win:
     call print_win
 
 exit:
-    ; exit(number)
-    mov rdi, 0              ; exit code
-    mov rax, 60             ; syscall: exit
+                              ; exit(number)
+    mov rdi, 0                ; exit code
+    mov rax, 60               ; syscall: exit
     syscall
 
 ; Swap which player's turn it is
@@ -72,31 +72,31 @@ swap_player_end:
     ret
 
 get_input:
-    ; Prompt user
-    mov rax, 1              ; syscall: write
-    mov rdi, 1              ; fd = stdout
+                              ; Prompt user
+    mov rax, 1                ; syscall: write
+    mov rdi, 1                ; fd = stdout
     mov rsi, prompt
     mov rdx, prompt_len
     syscall
-    ; Get user input
-    mov rax, 0              ; syscall: read
-    mov rdi, 0              ; fd = stdin
+                              ; Get user input
+    mov rax, 0                ; syscall: read
+    mov rdi, 0                ; fd = stdin
     mov rsi, input_char
     mov rdx, 1
     syscall
-    ; Convert ASCII to integer
+                              ; Convert ASCII to integer
     movzx rax, byte [input_char]
     sub    rax, '0'
-    ; Check lower bound
+                              ; Check lower bound
     cmp    rax, 1
     jl     invalid_input
-    ; Check upper bound
+                              ; Check upper bound
     cmp    rax, 9
     jg     invalid_input
     ret
 invalid_input:
-    mov rax, 1 ; syscall: write
-    mov rdi, 1 ; fd = stdout
+    mov rax, 1                ; syscall: write
+    mov rdi, 1                ; fd = stdout
     mov rsi, invalid
     mov rdx, invalid_len
     syscall
@@ -108,8 +108,8 @@ invalid_input:
 ; Returns:
 ;   None
 reset_cursor:
-    mov rax, 1              ; syscall: write
-    mov rdi, 1              ; fd = stdout
+    mov rax, 1                ; syscall: write
+    mov rdi, 1                ; fd = stdout
     mov rsi, reset_cursor_ansi
     mov rdx, reset_cursor_ansi_len
     syscall
@@ -121,14 +121,14 @@ reset_cursor:
 ; Returns:
 ;   None
 print_win:
-    mov [winner_char], dil  ; lowest 8 bits of rdi
+    mov [winner_char], dil    ; lowest 8 bits of rdi
     mov rax, 1
     mov rdi, 1
     mov rsi, newline
     mov rdx, 1
     syscall
-    mov rax, 1              ; syscall: write
-    mov rdi, 1              ; fd = stdout
+    mov rax, 1                ; syscall: write
+    mov rdi, 1                ; fd = stdout
     mov rsi, winner
     mov rdx, winner_len
     syscall
