@@ -8,8 +8,10 @@ section .data
     newline db 10
     reset_cursor_ansi db `\033[7A\033[22D`
     reset_cursor_ansi_len equ $ - reset_cursor_ansi
-    winner db "The winner is: ", 0
+    winner db 10, "The winner is: ", 0
     winner_len equ $ - winner
+    draw db 10, "It was a draw!", 10, 0
+    draw_len equ $ - draw
 
 section .bss
     input_char resb 1
@@ -24,6 +26,7 @@ extern set_raw_mode
 extern draw_board
 extern init_board
 extern check_win
+extern check_draw
 
 _start:
     call set_raw_mode
@@ -43,16 +46,22 @@ game_loop:
     mov rdi, board
     call draw_board
     mov rdi, board
-    call check_win
+    call check_win                  ; Check if there is a win
     mov rdi, rax
-    cmp rax, 0x00                   ; Check if there is a win
-    jne win
+    cmp rax, 0x00
+    jne game_loop_win
+    mov rdi, board
+    call check_draw                 ; Check if there is a draw
+    cmp rax, 0x00
+    jne game_loop_draw
     jmp game_loop
-win:
+game_loop_win:
     call print_win
-
-exit:
-                                    ; exit(number)
+    jmp game_loop_end
+game_loop_draw:
+    call print_draw
+    jmp game_loop_end
+game_loop_end:
     mov rdi, 0                      ; exit code
     mov rax, 60                     ; syscall: exit
     syscall
@@ -131,11 +140,6 @@ reset_cursor:
 ;   None
 print_win:
     mov [winner_char], dil          ; lowest 8 bits of rdi
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, newline
-    mov rdx, 1
-    syscall
     mov rax, 1                      ; syscall: write
     mov rdi, 1                      ; fd = stdout
     mov rsi, winner
@@ -150,5 +154,18 @@ print_win:
     mov rdi, 1
     mov rsi, newline
     mov rdx, 1
+    syscall
+    ret
+
+; Print draw text
+; Parameters:
+;   None
+; Returns:
+;   None
+print_draw:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, draw
+    mov rdx, draw_len
     syscall
     ret

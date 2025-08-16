@@ -3,6 +3,7 @@ BITS 64
 global draw_board
 global init_board
 global check_win
+global check_draw
 
 ; 0xE2, 0x94, 0x8C = ┌
 ; 0xE2, 0x94, 0x90 = ┐
@@ -149,6 +150,25 @@ check_win:
     call check_diagonal_win
 check_win_end:
     pop rbx
+    ret
+
+; Check for draw
+; Parameters:
+;   rdi - pointer to the board state
+; Returns:
+;   rax - 0x00 if no draw, 0x01 if there is a draw
+check_draw:
+    xor rcx, rcx
+check_draw_loop:
+    cmp rcx, 9
+    je check_draw_end
+    inc rcx
+    cmp byte [rdi+rcx-1], 0x20
+    jne check_draw_loop
+    mov rax, 0x00
+    ret
+check_draw_end:
+    mov rax, 0x01
     ret
 
 ; Check for horizontal win line
