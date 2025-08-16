@@ -20,7 +20,7 @@ run: $(BUILD_DIR)/main
 	./$(BUILD_DIR)/main
 
 fmt:
-	find -name "*.s" -execdir naslint -i {} ";"
+	find -name "*.s" -exec naslint -i "{}" \;
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.s | $(BUILD_DIR)
 	nasm $(ASMFLAGS) -o $@ $<
