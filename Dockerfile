@@ -6,7 +6,7 @@ COPY . .
 
 RUN make all
 
-FROM alpine
+FROM scratch
 
 COPY --from=builder ./build/main ./main
 
