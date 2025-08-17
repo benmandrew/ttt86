@@ -1,0 +1,74 @@
+#!/usr/bin/expect -f
+
+set timeout 1
+source ./tests/util.exp
+
+spawn ./build/main
+
+expect_exact "┌─┬─┬─┐"              
+expect_exact "│ │ │ │"
+expect_exact "├─┼─┼─┤"
+expect_exact "│ │ │ │"
+expect_exact "├─┼─┼─┤"
+expect_exact "│ │ │ │"
+expect_exact "└─┴─┴─┘"
+expect_exact "Enter a number (1-9):"
+
+send "A"
+
+expect_exact "Invalid input."
+
+send "1"
+
+expect_exact "┌─┬─┬─┐"              
+expect_exact "│X│ │ │"
+expect_exact "├─┼─┼─┤"
+expect_exact "│ │ │ │"
+expect_exact "├─┼─┼─┤"
+expect_exact "│ │ │ │"
+expect_exact "└─┴─┴─┘"
+expect_exact "Enter a number (1-9):"
+
+send "7"
+
+expect_exact "┌─┬─┬─┐"              
+expect_exact "│X│ │ │"
+expect_exact "├─┼─┼─┤"
+expect_exact "│ │ │ │"
+expect_exact "├─┼─┼─┤"
+expect_exact "│O│ │ │"
+expect_exact "└─┴─┴─┘"
+expect_exact "Enter a number (1-9):"
+
+send "9"
+
+expect_exact "┌─┬─┬─┐"              
+expect_exact "│X│ │ │"
+expect_exact "├─┼─┼─┤"
+expect_exact "│ │ │ │"
+expect_exact "├─┼─┼─┤"
+expect_exact "│O│ │X│"
+expect_exact "└─┴─┴─┘"
+expect_exact "Enter a number (1-9):"
+
+send "6"
+
+expect_exact "┌─┬─┬─┐"              
+expect_exact "│X│ │ │"
+expect_exact "├─┼─┼─┤"
+expect_exact "│ │ │O│"
+expect_exact "├─┼─┼─┤"
+expect_exact "│O│ │X│"
+expect_exact "└─┴─┴─┘"
+expect_exact "Enter a number (1-9):"
+
+send "5"
+
+expect_exact "┌─┬─┬─┐"              
+expect_exact "│X│ │ │"
+expect_exact "├─┼─┼─┤"
+expect_exact "│ │X│O│"
+expect_exact "├─┼─┼─┤"
+expect_exact "│O│ │X│"
+expect_exact "└─┴─┴─┘"
+expect_exact "The winner is: X"

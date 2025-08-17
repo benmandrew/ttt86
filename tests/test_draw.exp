@@ -1,0 +1,25 @@
+#!/usr/bin/expect -f
+
+set timeout 1
+source ./tests/util.exp
+
+spawn ./build/main
+
+send "1"
+send "2"
+send "3"
+send "7"
+send "8"
+send "9"
+send "4"
+send "5"
+send "6"
+
+expect_exact "┌─┬─┬─┐"              
+expect_exact "│X│O│X│"
+expect_exact "├─┼─┼─┤"
+expect_exact "│X│O│X│"
+expect_exact "├─┼─┼─┤"
+expect_exact "│O│X│O│"
+expect_exact "└─┴─┴─┘"
+expect_exact "It was a draw!"

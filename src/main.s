@@ -1,16 +1,16 @@
 BITS 64
 
 section .data
-    prompt db "Enter a number (1-9): ", 0
+    prompt db "Enter a number (1-9):", 10, 0
     prompt_len equ $ - prompt
-    invalid db "Invalid input.", 0x0D, 0
+    invalid db "Invalid input.", 10, 0
     invalid_len equ $ - invalid
     newline db 10
-    reset_cursor_ansi db `\033[7A\033[22D`
+    reset_cursor_ansi db `\033[8A\033[14D`
     reset_cursor_ansi_len equ $ - reset_cursor_ansi
-    winner db 10, "The winner is: ", 0
+    winner db "The winner is: ", 0
     winner_len equ $ - winner
-    draw db 10, "It was a draw!", 10, 0
+    draw db "It was a draw!", 10, 0
     draw_len equ $ - draw
 
 section .bss
@@ -42,7 +42,7 @@ game_loop:
     mov [board+rax], dl
     call swap_player
     mov [current_player_char], al
-    call reset_cursor
+                                    ; call reset_cursor
     mov rdi, board
     call draw_board
     mov rdi, board
@@ -88,13 +88,15 @@ swap_player_end:
 get_input:
     push rbx
     mov rbx, rdi
-get_input_start:
+    push r12
+    mov r12, 0
                                     ; Prompt user
     mov rax, 1                      ; syscall: write
     mov rdi, 1                      ; fd = stdout
     mov rsi, prompt
     mov rdx, prompt_len
     syscall
+get_input_start:
                                     ; Get user input
     mov rax, 0                      ; syscall: read
     mov rdi, 0                      ; fd = stdin
@@ -108,11 +110,15 @@ get_input_start:
     cmp rax, 9                      ; Check upper bound
     jg invalid_input
     dec rax                         ; Decrement user input to get index
-    cmp byte [rbx+rax], 0x20              ; Check if chosen square is empty
+    cmp byte [rbx+rax], 0x20        ; Check if chosen square is empty
     jne invalid_input
+    pop r12
     pop rbx
     ret
 invalid_input:
+    cmp r12, 0                      ; Only notify of invalid input the first time
+    jne get_input_start
+    mov r12, 1
     mov rax, 1                      ; syscall: write
     mov rdi, 1                      ; fd = stdout
     mov rsi, invalid
