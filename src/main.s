@@ -12,6 +12,8 @@ section .data
     winner_len equ $ - winner
     draw db "It was a draw!", 10, 0
     draw_len equ $ - draw
+    no_stdin db "Read syscall returned 0. is STDIN connected?", 10, 0
+    no_stdin_len equ $ - no_stdin
 
 section .bss
     input_char resb 1
@@ -57,14 +59,10 @@ game_loop:
     jmp game_loop
 game_loop_win:
     call print_win
-    jmp game_loop_end
+    jmp exit
 game_loop_draw:
     call print_draw
-    jmp game_loop_end
-game_loop_end:
-    mov rdi, 0                      ; exit code
-    mov rax, 60                     ; syscall: exit
-    syscall
+    jmp exit
 
 ; Swap which player's turn it is
 ; Parameters:
@@ -103,6 +101,8 @@ get_input_start:
     mov rsi, input_char
     mov rdx, 1
     syscall
+    cmp rax, 0
+    jle no_input_connected
     movzx rax, byte [input_char]    ; Convert ASCII to integer
     sub rax, '0'
     cmp rax, 1                      ; Check lower bound
@@ -175,3 +175,17 @@ print_draw:
     mov rdx, draw_len
     syscall
     ret
+
+no_input_connected:
+    mov rax, 1                      ; syscall: write
+    mov rdi, 1                      ; fd = stdout
+    mov rsi, no_stdin
+    mov rdx, no_stdin_len
+    syscall
+    jmp exit
+
+
+exit:
+    mov rdi, 0                      ; exit code
+    mov rax, 60                     ; syscall: exit
+    syscall
