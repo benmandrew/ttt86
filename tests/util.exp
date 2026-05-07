@@ -11,3 +11,13 @@ proc expect_exact {text} {
 		}
 	}
 }
+
+proc spawn_binary {} {
+	global env timeout spawn_id
+	if {[info exists env(COVERAGE_OUT)]} {
+		set timeout 30
+		spawn valgrind --tool=callgrind --callgrind-out-file=$env(COVERAGE_OUT) --quiet ./build/coverage/main
+	} else {
+		spawn ./build/main
+	}
+}

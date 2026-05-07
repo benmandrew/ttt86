@@ -3,7 +3,7 @@
 set timeout 1
 source ./tests/util.exp
 
-spawn ./build/main
+spawn_binary
 
 expect_exact "┌─┬─┬─┐"              
 expect_exact "│ │ │ │"
