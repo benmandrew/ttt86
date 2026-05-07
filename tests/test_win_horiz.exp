@@ -1,0 +1,21 @@
+#!/usr/bin/expect -f
+
+set timeout 1
+source ./tests/util.exp
+
+spawn_binary
+
+send "1"
+send "4"
+send "2"
+send "5"
+send "3"
+
+expect_exact "┌─┬─┬─┐"
+expect_exact "│X│X│X│"
+expect_exact "├─┼─┼─┤"
+expect_exact "│O│O│ │"
+expect_exact "├─┼─┼─┤"
+expect_exact "│ │ │ │"
+expect_exact "└─┴─┴─┘"
+expect_exact "The winner is: X"
