@@ -7,14 +7,14 @@ Tic-Tac-Toe in 64-bit x86 NASM assembly.
 Run from Docker with
 
 ```sh
-docker run -it benmandrew/ttt86
+$ docker run -it benmandrew/ttt86
 ```
 
 Alternatively, build and run on Linux with
 
 ```sh
-make
-./build/main
+$ make
+$ ./build/main
 ```
 
 ## Tools
