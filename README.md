@@ -1,6 +1,6 @@
 # TTT86
 
-![Coverage](docs/coverage.svg) ![Docker Image Size](https://img.shields.io/docker/image-size/benmandrew/ttt86)
+![Coverage](docs/coverage.svg) [![Docker Image Size](https://img.shields.io/docker/image-size/benmandrew/ttt86)](https://hub.docker.com/repository/docker/benmandrew/ttt86/general)
 
 Tic-Tac-Toe in 64-bit x86 NASM assembly.
 
