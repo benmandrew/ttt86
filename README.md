@@ -35,4 +35,4 @@ $ ./build/main
 | `callgrind_annotate` (valgrind) | Renders the annotated source coverage report |
 | `objdump` (binutils) | Reads DWARF debug info to enumerate executable lines |
 | `bc` | Computes the coverage percentage in `docs/coverage.sh` |
-| `naslint` | Formats `.s` source files (`make fmt`) |
+| `nasfmt` | Formats `.s` source files (`make fmt`) |

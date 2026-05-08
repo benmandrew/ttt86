@@ -34,8 +34,11 @@ test: $(TARGET)
 	done
 	@echo "All tests passed!"
 
+fmt-ci:
+	nasfmt --check **/*.s
+
 fmt:
-	find -name "*.s" -exec naslint -i "{}" \;
+	nasfmt **/*.s
 
 coverage: build/coverage.json docs/coverage.svg
 
