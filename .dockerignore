@@ -1,0 +1,7 @@
+# The build runs inside the image, so a host build/ tree would be copied in only to
+# be overwritten -- and any stale object in it invalidates the COPY layer's cache
+# on every change.
+build/
+.git/
+.github/
+docs/
